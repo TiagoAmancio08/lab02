@@ -61,13 +61,9 @@ public class RegistroResumos {
 
         return resultado;
     }
-
-    public int contaResumos() {
-        return quantidade;
-    }
-
+// metodo redundante
     public int conta() {
-        return contaResumos();
+        return quantidade;
     }
 
     public boolean temResumo(String tema) {
