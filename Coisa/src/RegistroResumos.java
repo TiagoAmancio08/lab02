@@ -1,12 +1,10 @@
 public class RegistroResumos {
-    private String[] temas;
-    private String[] conteudos;
+    private Resumo[] resumos;
     private int quantidade;
     private int proximo;
 
     public RegistroResumos(int numeroDeResumos) {
-        this.temas = new String[numeroDeResumos];
-        this.conteudos = new String[numeroDeResumos];
+        this.resumos = new Resumo[numeroDeResumos];
         this.quantidade = 0;
         this.proximo = 0;
     }
@@ -16,14 +14,13 @@ public class RegistroResumos {
             return;
         }
 
-        temas[proximo] = tema;
-        conteudos[proximo] = conteudo;
+        resumos[proximo] = new Resumo(tema, conteudo);
 
-        if (quantidade < temas.length) {
+        if (quantidade < resumos.length) {
             quantidade++;
         }
 
-        proximo = (proximo + 1) % temas.length;
+        proximo = (proximo + 1) % resumos.length;
     }
 
     public void adiciona(String tema, String conteudo) {
@@ -33,11 +30,11 @@ public class RegistroResumos {
     public String[] pegaResumos() {
         String[] resumos = new String[quantidade];
 
-        int inicio = (quantidade == temas.length) ? proximo : 0;
+        int inicio = (quantidade == this.resumos.length) ? proximo : 0;
 
         for (int i = 0; i < quantidade; i++) {
-            int indice = (inicio + i) % temas.length;
-            resumos[i] = temas[indice] + ": " + conteudos[indice];
+            int indice = (inicio + i) % this.resumos.length;
+            resumos[i] = this.resumos[indice].getTema() + ": " + this.resumos[indice].getConteudo();
         }
 
         return resumos;
@@ -48,11 +45,11 @@ public class RegistroResumos {
                 " resumo(s) cadastrado(s)\n- ";
 
         for (int i = 0; i < quantidade; i++) {
-            int indice = (quantidade == temas.length)
-                    ? (proximo + i) % temas.length
+            int indice = (quantidade == resumos.length)
+                    ? (proximo + i) % resumos.length
                     : i;
 
-            resultado += temas[indice];
+            resultado += resumos[indice].getTema();
 
             if (i < quantidade - 1) {
                 resultado += " | ";
@@ -62,21 +59,62 @@ public class RegistroResumos {
         return resultado;
     }
 // metodo redundante
-    public int conta() {
+    public int contaResumos() {
         return quantidade;
     }
 
     public boolean temResumo(String tema) {
         for (int i = 0; i < quantidade; i++) {
-            int indice = (quantidade == temas.length)
-                    ? (proximo + i) % temas.length
+            int indice = (quantidade == resumos.length)
+                    ? (proximo + i) % resumos.length
                     : i;
 
-            if (temas[indice].equals(tema)) {
+            if (resumos[indice].getTema().equals(tema)) {
                 return true;
             }
         }
 
         return false;
     }
+
+
+    public String[] busca(String chaveDeBusca) {
+        String[] encontrados = new String[quantidade];
+        int total = 0;
+
+        for (int i = 0; i < quantidade; i++) {
+            int indice = (quantidade == resumos.length)
+                    ? (proximo + i) % resumos.length
+                    : i;
+
+            String conteudo = resumos[indice].getConteudo();
+
+            if (conteudo.toLowerCase().contains(chaveDeBusca.toLowerCase())) {
+                encontrados[total] = resumos[indice].getTema();
+                total++;
+            }
+        }
+
+        String[] resultado = new String[total];
+
+        for (int i = 0; i < total; i++) {
+            resultado[i] = encontrados[i];
+        }
+
+        ordena(resultado);
+        return resultado;
+    }
+
+    private void ordena(String[] temas) {
+        for (int i = 0; i < temas.length - 1; i++) {
+            for (int j = 0; j < temas.length - 1 - i; j++) {
+                if (temas[j].compareToIgnoreCase(temas[j + 1]) > 0) {
+                    String temporario = temas[j];
+                    temas[j] = temas[j + 1];
+                    temas[j + 1] = temporario;
+                }
+            }
+        }
+    }
+
 }
